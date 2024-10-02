@@ -15,6 +15,8 @@ import { ProfileEntity } from '../user/entities/profile.entity';
 import { OtpEntity } from '../user/entities/otp.entity';
 import { AuthMessage, BadReqMessage } from 'src/common/enums/message.enum';
 import { randomInt } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +27,7 @@ export class AuthService {
     private readonly profileRepository: Repository<ProfileEntity>,
     @InjectRepository(OtpEntity)
     private readonly otpRepository: Repository<OtpEntity>,
+    private readonly tokenService:TokenService ,
   ) {}
   userExistence(authDto: AuthDto) {
     const { method, type, username } = authDto;
@@ -44,6 +47,7 @@ export class AuthService {
     const otp = await this.saveOtp(user.id);
     return {
       code: otp.code,
+      userId: user.id,
     };
   }
   async register(method: AuthMethod, username: string) {
@@ -56,12 +60,13 @@ export class AuthService {
       [method]: username,
     });
     user = await this.userRepository.save(user);
-    user.username = `m_${user.id}`
+    user.username = `m_${user.id}`;
     user = await this.userRepository.save(user);
     const otp = await this.saveOtp(user.id);
 
     return {
       code: otp.code,
+      userId: user.id
     };
   }
   async checkOtp() {}
