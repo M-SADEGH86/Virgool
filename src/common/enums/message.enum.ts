@@ -7,7 +7,8 @@ export enum AuthMessage {
   AlreadyExistAccount = 'حساب کاربری با این مشخصات از قبل وجود دارد' , 
   ExpireCode="کد تایید منقضی شد مجددا تلاش کنید " , 
   TryAgain = "دوباره تلاش کنید " ,
-  LoginAgain = "مجددا وارد حساب کاربری خود شوید "
+  LoginAgain = "مجددا وارد حساب کاربری خود شوید " , 
+  LogginIsRequired = "وارد حساب کاربری خود شوید"
 }
 export enum NotFoundMessage {}
 export enum ValidationMessage {}

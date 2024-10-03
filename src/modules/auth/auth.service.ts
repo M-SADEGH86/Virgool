@@ -160,4 +160,10 @@ export class AuthService {
         throw new UnauthorizedException('username data is inValid');
     }
   }
+  async validateAccessToken (token:string) {
+    const {userId} = this.tokenService.verifyAccessToken(token)
+    const user = await this.userRepository.findOneBy({id: userId})
+    if(!user) throw new UnauthorizedException(AuthMessage.LoginAgain) ;
+    return user
+  }
 }
