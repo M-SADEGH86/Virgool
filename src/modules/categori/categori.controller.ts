@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { CategoriService } from './categori.service';
 import { CreateCategoriDto } from './dto/create-categori.dto';
 import { UpdateCategoriDto } from './dto/update-categori.dto';
@@ -30,12 +30,13 @@ export class CategoriController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoriDto: UpdateCategoriDto) {
-    return this.categoriService.update(+id, updateCategoriDto);
+  @ApiConsumes( SwaggerConsumes.UrlEncoded , SwaggerConsumes.Json)
+  update(@Param('id' , ParseIntPipe) id: number, @Body() updateCategoriDto: UpdateCategoriDto) {
+    return this.categoriService.update(id, updateCategoriDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriService.remove(+id);
+  remove(@Param('id' , ParseIntPipe) id: number) {
+    return this.categoriService.remove(id);
   }
 }

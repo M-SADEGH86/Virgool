@@ -1,10 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoriDto } from './dto/create-categori.dto';
 import { UpdateCategoriDto } from './dto/update-categori.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriEntity } from './entities/categori.entity';
 import { Repository } from 'typeorm';
-import { ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { ConflictMessage, NotFoundMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { paginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
 
@@ -35,26 +35,39 @@ export class CategoriService {
   }
   async findAll(paginationDto: PaginationDto) {
     const { limit, page, skip } = PaginationSolver(paginationDto);
-    const [categories , count] = await this.categoriRepository.findAndCount({
-      where : {} ,
-      skip , 
-      take : limit , 
+    const [categories, count] = await this.categoriRepository.findAndCount({
+      where: {},
+      skip,
+      take: limit,
     });
     return {
-      pagination: paginationGenerator(count , page , limit) , 
-      categories
-    }
+      pagination: paginationGenerator(count, page, limit),
+      categories,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} categori`;
+  async findOne(id: number) {
+    const categori = await this.categoriRepository.findOneBy({ id });
+    if (!categori) throw new NotFoundException(NotFoundMessage.NotFoundCategori);
+    return categori;
   }
 
-  update(id: number, updateCategoriDto: UpdateCategoriDto) {
-    return `This action updates a #${id} categori`;
+  async update(id: number, updateCategoriDto: UpdateCategoriDto) {
+    const categori = await this.findOne(id);
+    const { priority, title } = updateCategoriDto;
+    if (title) categori.title = title;
+    if (priority) categori.priority = priority;
+    await this.categoriRepository.save(categori);
+    return {
+      message: PublicMessage.Updated,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categori`;
+  async remove(id: number) {
+    await this.findOne(id);
+    await this.categoriRepository.delete({ id });
+    return {
+      message: PublicMessage.Deleted,
+    };
   }
 }
