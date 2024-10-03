@@ -14,5 +14,6 @@ export enum NotFoundMessage {}
 export enum ValidationMessage {}
 export enum PublicMessage {
   SendOtp = "کد یکبار مصرف با موفقیت ارسال شد " , 
-  LoggedIn = "با موفقیت وارد حساب کاربری خود شدید"
+  LoggedIn = "با موفقیت وارد حساب کاربری خود شدید" , 
+  Created = "با موفقیت ایجاد شد"
 }
