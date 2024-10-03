@@ -6,6 +6,7 @@ import { CategoriEntity } from './entities/categori.entity';
 import { Repository } from 'typeorm';
 import { ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { paginationGenerator, PaginationSolver } from 'src/common/utils/pagination.util';
 
 @Injectable()
 export class CategoriService {
@@ -16,7 +17,7 @@ export class CategoriService {
 
   async create(createCategoriDto: CreateCategoriDto) {
     let { priority, title } = createCategoriDto;
-    title = await this.checkExistAndResolveTitle(title)
+    title = await this.checkExistAndResolveTitle(title);
     const categori = this.categoriRepository.create({
       title,
       priority,
@@ -26,15 +27,23 @@ export class CategoriService {
       message: PublicMessage.Created,
     };
   }
-  async checkExistAndResolveTitle (title: string) {
-    title = title?.trim()?.toLowerCase()
-    const categori = await this.categoriRepository.findOneBy({title})
-    if (categori) throw new ConflictException(ConflictMessage.CategoriTitle)
-    return title
+  async checkExistAndResolveTitle(title: string) {
+    title = title?.trim()?.toLowerCase();
+    const categori = await this.categoriRepository.findOneBy({ title });
+    if (categori) throw new ConflictException(ConflictMessage.CategoriTitle);
+    return title;
   }
-  findAll(paginationDto:PaginationDto) {
-    console.log(paginationDto)
-    return this.categoriRepository.findBy({});
+  async findAll(paginationDto: PaginationDto) {
+    const { limit, page, skip } = PaginationSolver(paginationDto);
+    const [categories , count] = await this.categoriRepository.findAndCount({
+      where : {} ,
+      skip , 
+      take : limit , 
+    });
+    return {
+      pagination: paginationGenerator(count , page , limit) , 
+      categories
+    }
   }
 
   findOne(id: number) {
