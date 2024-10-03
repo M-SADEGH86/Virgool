@@ -3,17 +3,20 @@ export enum BadReqMessage {
   InValidRegisterData = 'اطلاعات وارد شده برای ثبت نام صحیح نمی باشد',
 }
 export enum AuthMessage {
-  NotFoundAccount = 'حساب کاربری یافت نشد' , 
-  AlreadyExistAccount = 'حساب کاربری با این مشخصات از قبل وجود دارد' , 
-  ExpireCode="کد تایید منقضی شد مجددا تلاش کنید " , 
-  TryAgain = "دوباره تلاش کنید " ,
-  LoginAgain = "مجددا وارد حساب کاربری خود شوید " , 
-  LogginIsRequired = "وارد حساب کاربری خود شوید"
+  NotFoundAccount = 'حساب کاربری یافت نشد',
+  AlreadyExistAccount = 'حساب کاربری با این مشخصات از قبل وجود دارد',
+  ExpireCode = 'کد تایید منقضی شد مجددا تلاش کنید ',
+  TryAgain = 'دوباره تلاش کنید ',
+  LoginAgain = 'مجددا وارد حساب کاربری خود شوید ',
+  LogginIsRequired = 'وارد حساب کاربری خود شوید',
 }
 export enum NotFoundMessage {}
 export enum ValidationMessage {}
 export enum PublicMessage {
-  SendOtp = "کد یکبار مصرف با موفقیت ارسال شد " , 
-  LoggedIn = "با موفقیت وارد حساب کاربری خود شدید" , 
-  Created = "با موفقیت ایجاد شد"
+  SendOtp = 'کد یکبار مصرف با موفقیت ارسال شد ',
+  LoggedIn = 'با موفقیت وارد حساب کاربری خود شدید',
+  Created = 'با موفقیت ایجاد شد',
+}
+export enum ConflictMessage {
+  CategoriTitle = "عنوان دسته بندی قبلا ثبت شده است "
 }

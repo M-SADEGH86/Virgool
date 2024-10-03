@@ -2,14 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CategoriService } from './categori.service';
 import { CreateCategoriDto } from './dto/create-categori.dto';
 import { UpdateCategoriDto } from './dto/update-categori.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { SwaggerConsumes } from 'src/common/enums/swagger-consumes.enum';
 
 @Controller('categori')
 @ApiTags("Categori")
 export class CategoriController {
   constructor(private readonly categoriService: CategoriService) {}
-
+  
   @Post()
+  @ApiConsumes( SwaggerConsumes.UrlEncoded , SwaggerConsumes.Json)
   create(@Body() createCategoriDto: CreateCategoriDto) {
     return this.categoriService.create(createCategoriDto);
   }
