@@ -13,7 +13,7 @@ export class AuthController {
   @Post('/user-existence')
   @ApiConsumes( SwaggerConsumes.UrlEncoded , SwaggerConsumes.Json , SwaggerConsumes.MultipartData)
   userExistence(@Body() authDto: AuthDto , @Res() res:Response) {
-    const result = this.authService.userExistence(authDto)
-    res.cookie(CookieKeys.Otp)
+    return this.authService.userExistence(authDto , res)
+    // res.cookie(CookieKeys.Otp , result.token , {httpOnly : true})
   }
 }

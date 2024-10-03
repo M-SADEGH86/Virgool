@@ -17,6 +17,9 @@ import { AuthMessage, BadReqMessage } from 'src/common/enums/message.enum';
 import { randomInt } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { TokenService } from './token.service';
+import { Response } from 'express';
+import { CookieKeys } from 'src/common/enums/cookie.enum';
+import { AuthResponseType } from './types/response';
 
 @Injectable()
 export class AuthService {
@@ -29,13 +32,16 @@ export class AuthService {
     private readonly otpRepository: Repository<OtpEntity>,
     private readonly tokenService:TokenService ,
   ) {}
-  userExistence(authDto: AuthDto) {
+  async userExistence(authDto: AuthDto , res:Response) {
+    let result:AuthResponseType ;
     const { method, type, username } = authDto;
     switch (type) {
       case AuthType.Login:
-        return this.login(method, username);
+        result = await this.login(method, username);
+        return this.sendResponse(res , result)
       case AuthType.Register:
-        return this.register(method, username);
+        result = await this.register(method, username);
+        return this.sendResponse(res , result)
       default:
         throw new UnauthorizedException('');
     }
@@ -45,9 +51,10 @@ export class AuthService {
     let user: UserEntity = await this.checkExistUser(method, validUsername);
     if (!user) throw new UnauthorizedException(AuthMessage.NotFoundAccount);
     const otp = await this.saveOtp(user.id);
+    const token = this.tokenService.createOtpToken({userId : user.id})
     return {
       code: otp.code,
-      userId: user.id,
+      token
     };
   }
   async register(method: AuthMethod, username: string) {
@@ -63,12 +70,21 @@ export class AuthService {
     user.username = `m_${user.id}`;
     user = await this.userRepository.save(user);
     const otp = await this.saveOtp(user.id);
-
+    const token = this.tokenService.createOtpToken({userId : user.id})
     return {
       code: otp.code,
-      userId: user.id
+      token
     };
   }
+  async sendResponse (res:Response , result:AuthResponseType) {
+    const {token , code} = result
+    res.cookie(CookieKeys.Otp , token , {httpOnly : true})
+    res.json({
+      message : "send otp" , 
+      code : code
+    })
+  }
+
   async checkOtp() {}
   async saveOtp(userId: number) {
     const code: string = randomInt(10000, 99999).toString();
