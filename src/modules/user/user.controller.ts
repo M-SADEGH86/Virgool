@@ -1,13 +1,15 @@
 import { Body, Controller, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ProfileDto } from './dto/profile.dto';
+import { SwaggerConsumes } from 'src/common/enums/swagger-consumes.enum';
 
 @Controller('/user')
 @ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Put("/profile")
+  @ApiConsumes(SwaggerConsumes.MultipartData)
   chengeProfile (@Body() profileDto:ProfileDto) {
     return this.userService.chengeProfile(profileDto)
   }

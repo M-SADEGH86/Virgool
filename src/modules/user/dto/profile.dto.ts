@@ -14,6 +14,7 @@ export class ProfileDto {
   @ApiPropertyOptional({nullable : true , format : "binary"})
   bg_image: string;
   @ApiPropertyOptional({nullable : true , enum : Gender})
+  @IsEnum(Gender)
   gender: Gender;
   @ApiPropertyOptional({nullable : true , example : "1996-02-22T12:01:26.487Z"})
   birthday: Date
