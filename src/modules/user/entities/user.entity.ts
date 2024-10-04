@@ -20,6 +20,7 @@ export class UserEntity extends BaseEntity {
   @Column({nullable : true})
   profileId: number
   @OneToOne(() => ProfileEntity , profile => profile.user , {nullable : true , onDelete : "CASCADE"})
+  @JoinColumn({name : "profileId"})
   profile: ProfileEntity
   @Column({nullable : true})
   otpId: number 

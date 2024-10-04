@@ -18,9 +18,11 @@ export class ProfileEntity extends BaseEntity {
   @Column({nullable : true})
   birthday: Date
   @Column()
+  x_profile: string
+  @Column()
   linkedin_profile: string
   @Column({unique : true})
   userId: number
-  @OneToOne(() => UserEntity , user => user.profile)
+  @OneToOne(() => UserEntity , user => user.profile , {onDelete : "CASCADE"})
   user: UserEntity
 }

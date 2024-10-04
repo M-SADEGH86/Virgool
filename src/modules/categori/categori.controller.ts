@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe 
 import { CategoriService } from './categori.service';
 import { CreateCategoriDto } from './dto/create-categori.dto';
 import { UpdateCategoriDto } from './dto/update-categori.dto';
-import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { SwaggerConsumes } from 'src/common/enums/swagger-consumes.enum';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { Pagination } from 'src/common/decorators/pagination.decorator';
