@@ -17,7 +17,8 @@ export class UserService {
     private readonly profileRepository: Repository<ProfileEntity>,
     @Inject(REQUEST) private readonly request: Request,
   ) {}
-  async chengeProfile(profileDto: ProfileDto) {
+  async chengeProfile(files:any ,profileDto: ProfileDto) {
+    console.log(files)
     const { id: userId, profileId } = this.request.user;
     const { bio, birthday, gender, linkedin_profile, nick_name, x_profile } = profileDto;
     let profile = await this.profileRepository.findOneBy({ userId });
