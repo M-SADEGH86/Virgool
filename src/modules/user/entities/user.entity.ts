@@ -6,7 +6,7 @@ import { OtpEntity } from "./otp.entity";
 
 @Entity(EntityNames.User)
 export class UserEntity extends BaseEntity {
-  @Column({unique : true})
+  @Column({unique : true , nullable : true})
   username: string ;
   @Column({unique : true , nullable : true})
   phone : string ;
@@ -18,7 +18,7 @@ export class UserEntity extends BaseEntity {
   created_at:Date
   @UpdateDateColumn()
   updated_at:Date
-  @Column()
+  @Column({nullable : true})
   profileId: number
   @OneToOne(() => ProfileEntity , profile => profile.user , {onDelete: "CASCADE"})
   @JoinColumn({name : "profileId"})

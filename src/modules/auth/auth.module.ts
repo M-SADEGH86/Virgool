@@ -7,10 +7,12 @@ import { AuthController } from './auth.controller';
 // import { OtpEntity } from '../user/entities/otp.entity';
 import { UserModule } from '../user/user.module';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { TokensService } from './tokens.service';
 
 @Module({
   imports: [UserModule],
   controllers: [AuthController],
-  providers : [AuthService]
+  providers : [AuthService , JwtService, TokensService]
 })
 export class AuthModule {}

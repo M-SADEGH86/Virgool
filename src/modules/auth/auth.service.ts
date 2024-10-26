@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
-import { Code, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AuthDto } from './dto/auth.dto';
 import { AuthType } from './enums/type.enum';
 import { AuthMethod } from './enums/method.enum';
@@ -15,13 +15,15 @@ import { ProfileEntity } from '../user/entities/profile.entity';
 import { AuthMessage, BadReqMessage } from 'src/common/enums/message.enum';
 import { OtpEntity } from '../user/entities/otp.entity';
 import { randomInt } from 'crypto';
+import { TokensService } from './tokens.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(ProfileEntity) private readonly profileRepository: Repository<ProfileEntity>,
-    @InjectRepository(OtpEntity) private readonly otpRepository: Repository<OtpEntity>,
+    @InjectRepository(OtpEntity) private readonly otpRepository: Repository<OtpEntity> ,
+    private readonly tokensService:TokensService ,
   ) {}
   async userExistence(authDto: AuthDto) {
     const { method, type, username } = authDto;
@@ -47,16 +49,23 @@ export class AuthService {
     const validUsername = this.usernameValidator(method, username);
     let user: UserEntity = await this.checkExistUser(method, validUsername);
     if (user) throw new ConflictException(AuthMessage.AlreadyExistAccount);
+    if (method === AuthMethod.Username) {
+      throw new BadRequestException(BadReqMessage.InValidRegisterData);
+    }
     user = this.userRepository.create({
       [method]: username,
     });
+    user = await this.userRepository.save(user);
+    user.username = `m_${user.id}`;
     user = await this.userRepository.save(user);
     const otp = await this.saveOtp(user.id);
     return {
       code: otp.code,
     };
   }
-  async checkOtp() {}
+  async checkOtp () {
+
+  }
   async saveOtp(userId: number) {
     const code: string = randomInt(10000, 99999).toString();
     const expires_in: Date = new Date(new Date().getTime() + 1000 * 60 * 2);
