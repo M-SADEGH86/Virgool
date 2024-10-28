@@ -14,7 +14,6 @@ export class AuthController {
   @Post('/user-existence')
   @ApiConsumes(Consumes.Form, Consumes.Json, Consumes.Multi)
   userExistence(@Body() authDto: AuthDto, @Res() res:Response) {
-    const result = this.authService.userExistence(authDto);
-    res.cookie(CookieKeys.OTP,"")
+    return this.authService.userExistence(authDto , res);
   }
 }

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CookiePayload } from './types/payload';
 
 @Injectable()
 export class TokensService {
   constructor(private readonly jwtService: JwtService) {}
-  createOtpToken (payload: any) {
+  createOtpToken (payload: CookiePayload) {
     const token = this.jwtService.sign(payload,{
       secret: process.env.OTP_TOKEN_SECRET,
       expiresIn: 60 * 2

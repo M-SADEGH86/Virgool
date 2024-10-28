@@ -12,26 +12,32 @@ import { AuthType } from './enums/type.enum';
 import { AuthMethod } from './enums/method.enum';
 import { isEmail, isMobilePhone } from 'class-validator';
 import { ProfileEntity } from '../user/entities/profile.entity';
-import { AuthMessage, BadRequestMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, BadRequestMessage, PublicMessage } from 'src/common/enums/message.enum';
 import { OtpEntity } from '../user/entities/otp.entity';
 import { randomInt } from 'crypto';
 import { TokensService } from './tokens.service';
+import { Response } from 'express';
+import { CookieKeys } from 'src/common/enums/cookie.enum';
+import { AuthResponse } from './types/response';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(ProfileEntity) private readonly profileRepository: Repository<ProfileEntity>,
-    @InjectRepository(OtpEntity) private readonly otpRepository: Repository<OtpEntity> ,
-    private readonly tokensService:TokensService ,
+    @InjectRepository(OtpEntity) private readonly otpRepository: Repository<OtpEntity>,
+    private readonly tokensService: TokensService,
   ) {}
-  async userExistence(authDto: AuthDto) {
+  async userExistence(authDto: AuthDto, res: Response) {
     const { method, type, username } = authDto;
+    let result: AuthResponse;
     switch (type) {
       case AuthType.Login:
-        return this.login(method, username);
+        result = await this.login(method, username);
+        return this.sendResponse(res, result);
       case AuthType.Register:
-        return this.register(method, username);
+        result = await this.register(method, username);
+        return this.sendResponse(res, result);
       default:
         throw new UnauthorizedException('');
     }
@@ -41,7 +47,9 @@ export class AuthService {
     let user: UserEntity = await this.checkExistUser(method, validUsername);
     if (!user) throw new UnauthorizedException(AuthMessage.NotFoundAccount);
     const otp = await this.saveOtp(user.id);
+    const token = this.tokensService.createOtpToken({ userId: user.id });
     return {
+      token,
       code: otp.code,
     };
   }
@@ -59,13 +67,21 @@ export class AuthService {
     user.username = `m_${user.id}`;
     user = await this.userRepository.save(user);
     const otp = await this.saveOtp(user.id);
+    const token = this.tokensService.createOtpToken({ userId: user.id });
     return {
+      token,
       code: otp.code,
     };
   }
-  async checkOtp () {
-
+  async sendResponse(res: Response, result: AuthResponse) {
+    const {code,token} = result;
+    res.cookie(CookieKeys.OTP, token, { httpOnly: true });
+    res.json({
+      message: PublicMessage.SentOtp,
+      code,
+    });
   }
+  async checkOtp() {}
   async saveOtp(userId: number) {
     const code: string = randomInt(10000, 99999).toString();
     const expires_in: Date = new Date(new Date().getTime() + 1000 * 60 * 2);
