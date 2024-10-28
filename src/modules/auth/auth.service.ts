@@ -12,7 +12,7 @@ import { AuthType } from './enums/type.enum';
 import { AuthMethod } from './enums/method.enum';
 import { isEmail, isMobilePhone } from 'class-validator';
 import { ProfileEntity } from '../user/entities/profile.entity';
-import { AuthMessage, BadReqMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, BadRequestMessage } from 'src/common/enums/message.enum';
 import { OtpEntity } from '../user/entities/otp.entity';
 import { randomInt } from 'crypto';
 import { TokensService } from './tokens.service';
@@ -50,7 +50,7 @@ export class AuthService {
     let user: UserEntity = await this.checkExistUser(method, validUsername);
     if (user) throw new ConflictException(AuthMessage.AlreadyExistAccount);
     if (method === AuthMethod.Username) {
-      throw new BadRequestException(BadReqMessage.InValidRegisterData);
+      throw new BadRequestException(BadRequestMessage.InValidRegisterData);
     }
     user = this.userRepository.create({
       [method]: username,
@@ -102,7 +102,7 @@ export class AuthService {
     } else if (method === AuthMethod.Username) {
       user = await this.userRepository.findOneBy({ username });
     } else {
-      throw new BadRequestException(BadReqMessage.InValidLoginData);
+      throw new BadRequestException(BadRequestMessage.InValidLoginData);
     }
     return user;
   }
