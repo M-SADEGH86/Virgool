@@ -91,17 +91,17 @@ export class AuthService {
   async checkOtp(code: string) {
     const token = this.request.cookies?.[CookieKeys.OTP];
     if (!token) throw new UnauthorizedException(AuthMessage.ExpiredCode);
-    const {userId} = this.tokensService.verifyOtpToken(token) 
-    const otp = await this.otpRepository.findOneBy({userId})
-    if (!otp) throw new UnauthorizedException(AuthMessage.LoginAgain) 
-    const now = new Date()
-    if (otp.expires_in < now) throw new UnauthorizedException(AuthMessage.ExpiredCode)
-    if(otp.code !== code) throw new UnauthorizedException(AuthMessage.TryAgain)
-    const accessToken = this.tokensService.createAccessToken({userId})
+    const { userId } = this.tokensService.verifyOtpToken(token);
+    const otp = await this.otpRepository.findOneBy({ userId });
+    if (!otp) throw new UnauthorizedException(AuthMessage.LoginAgain);
+    const now = new Date();
+    if (otp.expires_in < now) throw new UnauthorizedException(AuthMessage.ExpiredCode);
+    if (otp.code !== code) throw new UnauthorizedException(AuthMessage.TryAgain);
+    const accessToken = this.tokensService.createAccessToken({ userId });
     return {
-      message : PublicMessage.LoggedIn,
-      accessToken
-    }
+      message: PublicMessage.LoggedIn,
+      accessToken,
+    };
   }
   async saveOtp(userId: number) {
     const code: string = randomInt(10000, 99999).toString();
@@ -156,5 +156,11 @@ export class AuthService {
       default:
         throw new UnauthorizedException('username data is inValid');
     }
+  }
+  async validateAccessToken(token: string) {
+    const { userId } = this.tokensService.verifyAccessToken(token);
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) throw new UnauthorizedException(AuthMessage.LoginAgain);
+    return user;
   }
 }

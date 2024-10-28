@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDto, CheckOtpDto } from './dto/auth.dto';
 import { Consumes } from 'src/common/enums/consumes.enum';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -20,5 +21,11 @@ export class AuthController {
   @ApiConsumes(Consumes.Form,Consumes.Json,Consumes.Multi)
   checkOtp (@Body() checkOtpDto:CheckOtpDto) {
     return this.authService.checkOtp(checkOtpDto.code)
+  }
+
+  @Get("/check-login")
+  @UseGuards(AuthGuard)
+  checkAuth (@Req() req:Request) {
+    return req.user
   }
 }
