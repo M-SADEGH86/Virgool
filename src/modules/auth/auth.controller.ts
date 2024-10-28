@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthDto, CheckOtpDto } from './dto/auth.dto';
 import { Consumes } from 'src/common/enums/consumes.enum';
 import { Request, Response } from 'express';
@@ -25,6 +25,7 @@ export class AuthController {
 
   @Get("/check-login")
   @UseGuards(AuthGuard)
+  @ApiBearerAuth("Authorization")
   checkAuth (@Req() req:Request) {
     return req.user
   }
