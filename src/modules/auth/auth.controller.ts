@@ -16,6 +16,7 @@ export class AuthController {
   userExistence(@Body() authDto: AuthDto, @Res() res:Response) {
     return this.authService.userExistence(authDto , res);
   }
+  
   @Post("/checl-otp")
   @ApiConsumes(Consumes.Form,Consumes.Json,Consumes.Multi)
   checkOtp (@Body() checkOtpDto:CheckOtpDto) {
