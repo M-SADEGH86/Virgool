@@ -97,8 +97,10 @@ export class AuthService {
     const now = new Date()
     if (otp.expires_in < now) throw new UnauthorizedException(AuthMessage.ExpiredCode)
     if(otp.code !== code) throw new UnauthorizedException(AuthMessage.TryAgain)
+    const accessToken = this.tokensService.createAccessToken({userId})
     return {
-      message : PublicMessage.LoggedIn
+      message : PublicMessage.LoggedIn,
+      accessToken
     }
   }
   async saveOtp(userId: number) {
