@@ -6,6 +6,7 @@ import { join } from "path";
 import { TypeOrmConfig } from "src/configs/typeorm.config";
 import { UserModule } from "../user/user.module";
 import { AuthModule } from "../auth/auth.module";
+import { CategoryModule } from "../category/category.module";
 
 @Module({
   imports : [
@@ -16,7 +17,8 @@ import { AuthModule } from "../auth/auth.module";
     TypeOrmModule.forRoot(TypeOrmConfig()),
     JwtModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    CategoryModule,
   ]
 })
 export class AppModule {}
