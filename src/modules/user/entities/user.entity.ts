@@ -20,7 +20,7 @@ export class UserEntity extends BaseEntity {
   updated_at:Date
   @Column({nullable : true})
   profileId: number
-  @OneToOne(() => ProfileEntity , profile => profile.user , {onDelete: "CASCADE"})
+  @OneToOne(() => ProfileEntity , profile => profile.user , {nullable : true})
   @JoinColumn({name : "profileId"})
   profile: ProfileEntity
   @Column({ nullable: true })
