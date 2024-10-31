@@ -19,5 +19,7 @@ export class ProfileDto {
   @ApiPropertyOptional({nullable : true , example:"2025-01-31T20:42:25.262Z"})
   birthday: Date ;
   @ApiPropertyOptional()
-  linkedin_profile: string
+  linkedin_profile: string;
+  @ApiPropertyOptional()
+  x_profile: string;
 }

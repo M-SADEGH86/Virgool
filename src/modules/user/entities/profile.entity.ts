@@ -2,6 +2,7 @@ import { BaseEntity } from "src/common/abstracts/base-entity";
 import { EntityNames } from "src/common/enums/entity.enum";
 import { Column, Entity, OneToOne } from "typeorm";
 import { UserEntity } from "./user.entity";
+import { Gender } from "../enums/gender.enum";
 
 @Entity(EntityNames.Profile)
 export class ProfileEntity extends BaseEntity {
@@ -13,12 +14,14 @@ export class ProfileEntity extends BaseEntity {
   image_profile: string
   @Column({nullable : true})
   bg_image: string
-  @Column({nullable : true})
-  gender: string
+  @Column({type : "enum" , enum : Gender ,nullable : true})
+  gender: Gender
   @Column({nullable : true})
   birthday: Date ;
-  @Column()
+  @Column({nullable : true})
   linkedin_profile: string
+  @Column({nullable : true})
+  x_profile: string;
   @Column()
   userId: number ;
   @OneToOne(() => UserEntity , user => user.profile , {onDelete : "CASCADE"})
