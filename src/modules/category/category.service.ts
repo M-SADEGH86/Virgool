@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from './entities/category.entity';
 import { Repository } from 'typeorm';
 import { ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class CategoryService {
@@ -14,26 +15,27 @@ export class CategoryService {
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     let { priority, title } = createCategoryDto;
-    title = await this.checkExistAndResolvedTitle(title)
+    title = await this.checkExistAndResolvedTitle(title);
     const category = this.categoryRepository.create({
       title,
-      priority ,
-    })
-    await this.categoryRepository.save(category)
+      priority,
+    });
+    await this.categoryRepository.save(category);
     return {
-      message : PublicMessage.Created
-    }
+      message: PublicMessage.Created,
+    };
   }
 
-  async checkExistAndResolvedTitle (title: string) {
+  async checkExistAndResolvedTitle(title: string) {
     title = title.trim()?.toLowerCase();
-    const category = await this.categoryRepository.findOneBy({title})
-    if (category) throw new ConflictException(ConflictMessage.CategoryTitle)
-      return title ;
+    const category = await this.categoryRepository.findOneBy({ title });
+    if (category) throw new ConflictException(ConflictMessage.CategoryTitle);
+    return title;
   }
 
-  findAll() {
-    return this.categoryRepository.findBy({})
+  findAll(paginationDto: PaginationDto) {
+    console.log(paginationDto);
+    return this.categoryRepository.findBy({});
   }
 
   findOne(id: number) {
