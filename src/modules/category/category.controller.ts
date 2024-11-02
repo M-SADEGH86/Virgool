@@ -12,10 +12,10 @@ import {
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Consumes } from 'src/common/enums/consumes.enum';
+import { ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { Pagination } from 'src/common/decorators/pagination.decorator';
+import { SwaggerConsumes } from 'src/common/decorators/consumes.decorator';
 
 @Controller('category')
 @ApiTags('Category')
@@ -23,7 +23,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  @ApiConsumes(Consumes.Form, Consumes.Multi, Consumes.Json)
+  @SwaggerConsumes()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
   }
@@ -40,7 +40,7 @@ export class CategoryController {
   }
 
   @Patch('/:id')
-  @ApiConsumes(Consumes.Form, Consumes.Multi, Consumes.Json)
+  @SwaggerConsumes()
   update(@Param('id', ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoryService.update(id, updateCategoryDto);
   }
