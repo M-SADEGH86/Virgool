@@ -12,4 +12,4 @@ export const MulterDestination = (fieldName: string) => {
   }
 };
 
-export const MulterFileName (req:Request, file:MulterFile) {}
+export const MulterFileName  = (req:Request, file:MulterFile) => {}

@@ -1,23 +1,26 @@
-import { ApiPropertyOptional } from "@nestjs/swagger"
-import { IsEnum, Length } from "class-validator"
-import { Gender } from "../enums/gender.enum"
+import { IsEnum, Length, IsOptional } from 'class-validator';
+import { Gender } from '../enums/gender.enum';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ProfileDto {
+  @ApiPropertyOptional({ nullable: true })
+  @IsOptional()
+  @Length(3, 100)
+  nick_name: string;
+  @ApiPropertyOptional({ nullable: false })
+  @IsOptional()
+  @Length(10, 200)
+  bio: string;
   @ApiPropertyOptional()
-  @Length(3,50)
-  nick_name: string
-  @ApiPropertyOptional({nullable : true})
-  @Length(10,200)
-  bio: string
-  @ApiPropertyOptional({nullable : true,format : "binary"})
-  image_profile: string
-  @ApiPropertyOptional({nullable : true , format:"binary"})
-  bg_image: string
-  @ApiPropertyOptional({nullable : true ,enum:Gender})
+  image_profile: string;
+  @ApiPropertyOptional()
+  bg_image: string;
+  @ApiProperty({ required: false, enum: Gender })
+  @IsOptional()
   @IsEnum(Gender)
-  gender: Gender
-  @ApiPropertyOptional({nullable : true , example:"2025-01-31T20:42:25.262Z"})
-  birthday: Date ;
+  gender: Gender;
+  @ApiPropertyOptional()
+  birthday: Date;
   @ApiPropertyOptional()
   linkedin_profile: string;
   @ApiPropertyOptional()

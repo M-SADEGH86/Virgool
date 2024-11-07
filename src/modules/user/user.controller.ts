@@ -1,11 +1,10 @@
-import { Body, Controller, Put, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProfileDto } from './dto/profile.dto';
 import { SwaggerConsumes } from 'src/common/decorators/consumes.decorator';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { MulterDestination } from 'src/common/utils/multer.utils';
+import { AuthGuard } from '../auth/guards/auth.guard';
+
 
 @Controller('user')
 @ApiTags('User')
@@ -14,15 +13,8 @@ export class UserController {
 
   @Put('/profile')
   @SwaggerConsumes()
-  @UseInterceptors(FileFieldsInterceptor([
-    {name : "image_profile" , maxCount: 1},
-    {name : "bg_image" , maxCount: 1}
-  ],{
-    storage : diskStorage({
-      destination : MulterDestination("user-profile"),
-      filename:() => {}
-    })
-  }))
+  @ApiBearerAuth("Authorization")
+  @UseGuards(AuthGuard)
   changeProfile(@Body() profileDto: ProfileDto) {
     return this.userService.changeProfile(profileDto);
   }
