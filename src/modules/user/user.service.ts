@@ -19,8 +19,9 @@ export class UserService {
     @Inject(REQUEST) private readonly req: Request,
   ) {}
 
-  async changeProfile(profileDto: ProfileDto) {
+  async changeProfile(files:unknown, profileDto: ProfileDto) {
     const { id: userId, profileId } = this.req.user;
+    console.log(files)
     let profile = await this.profileRepository.findOneBy({ userId });
     console.log(profile);
     const { bio, birthday, gender, linkedin_profile, nick_name, x_profile } = profileDto;

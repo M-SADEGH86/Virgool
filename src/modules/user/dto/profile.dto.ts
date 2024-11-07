@@ -7,22 +7,22 @@ export class ProfileDto {
   @IsOptional()
   @Length(3, 100)
   nick_name: string;
-  @ApiPropertyOptional({ nullable: false })
+  @ApiPropertyOptional({ nullable: true })
   @IsOptional()
   @Length(10, 200)
   bio: string;
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({nullable : true , format : "binary"})
   image_profile: string;
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({nullable : true , format : "binary"})
   bg_image: string;
-  @ApiProperty({ required: false, enum: Gender })
+  @ApiPropertyOptional({nullable : true, enum: Gender })
   @IsOptional()
   @IsEnum(Gender)
   gender: Gender;
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({nullable:true,example : "2007-11-07T21:35:25.722Z"})
   birthday: Date;
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({nullable : true})
   linkedin_profile: string;
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({nullable : true})
   x_profile: string;
 }
