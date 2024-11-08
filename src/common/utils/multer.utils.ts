@@ -3,6 +3,7 @@ import { mkdirSync } from 'fs';
 import { extname, join } from 'path';
 import { ValidationMessage } from '../enums/message.enum';
 import { BadRequestException } from '@nestjs/common';
+import { diskStorage } from 'multer';
 export type CallBackDestination = (err: Error, destination: string) => void;
 export type CallBackFileName = (err:Error , fileName:string) => void
 export type MulterFile = Express.Multer.File;
@@ -24,4 +25,10 @@ export const MulterFileName = (req:Request , file:MulterFile , cb:CallBackFileNa
 }
 const isValidImageFormat = (ext:string) => {
   return [".png" , ".jpg" , ".jpeg"].includes(ext)
+}
+export const MulterStorage = (folderName: string) => {
+  return diskStorage({
+    destination: MulterDestination(folderName),
+    filename: MulterFileName,
+  })
 }

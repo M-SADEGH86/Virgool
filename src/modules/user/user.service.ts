@@ -8,6 +8,7 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { isDate, isString } from 'class-validator';
 import { Gender } from './enums/gender.enum';
+import { profileImages } from './types/files';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -19,14 +20,14 @@ export class UserService {
     @Inject(REQUEST) private readonly req: Request,
   ) {}
 
-  async changeProfile(files: any, profileDto: ProfileDto) {
+  async changeProfile(files: profileImages, profileDto: ProfileDto) {
     if (files?.image_profile?.length > 0) {
       let [image] = files?.image_profile;
-      profileDto.image_profile = image.path;
+      profileDto.image_profile = image?.path?.slice(7);
     }
     if (files?.bg_image?.length > 0) {
       let [image] = files?.bg_image;
-      profileDto.bg_image = image.path;
+      profileDto.bg_image = image?.path?.slice(7);
     }
     const { id: userId, profileId } = this.req.user;
     let profile = await this.profileRepository.findOneBy({ userId });
@@ -61,5 +62,13 @@ export class UserService {
     return {
       message: 'Success',
     };
+  }
+
+  async profile () {
+    const {id} = this.req.user
+    return this.userRepository.findOne({
+      where : {id} , 
+      relations : {profile:true}
+    })
   }
 }
