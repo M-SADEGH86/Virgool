@@ -21,13 +21,13 @@ import { UploadedOptionalFile } from 'src/common/decorators/upload-file.decorato
 
 @Controller('user')
 @ApiTags('User')
+@ApiBearerAuth('Authorization')
+@UseGuards(AuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Put('/profile')
   @SwaggerConsumes()
-  @ApiBearerAuth('Authorization')
-  @UseGuards(AuthGuard)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -42,10 +42,8 @@ export class UserController {
   changeProfile(@UploadedOptionalFile() files: profileImages, @Body() profileDto: ProfileDto) {
     return this.userService.changeProfile(files, profileDto);
   }
-
+  
   @Get("/profile")
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Authorization')
   profile () {
     return this.userService.profile()
   }

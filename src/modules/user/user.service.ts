@@ -6,9 +6,10 @@ import { ProfileDto } from './dto/profile.dto';
 import { UserEntity } from './entities/user.entity';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
-import { isDate, isString } from 'class-validator';
+import { isDate } from 'class-validator';
 import { Gender } from './enums/gender.enum';
 import { profileImages } from './types/files';
+import { PublicMessage } from 'src/common/enums/message.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -34,7 +35,7 @@ export class UserService {
 
     const { bio, birthday, gender, linkedin_profile, nick_name, x_profile, bg_image, image_profile } = profileDto;
     if (profile) {
-      if (nick_name && isString(nick_name)) profile.nick_name = nick_name;
+      if (nick_name) profile.nick_name = nick_name;
       if (bio) profile.bio = bio;
       if (birthday && isDate(new Date(birthday))) profile.birthday = new Date(birthday);
       if (gender && Object.values(Gender).includes(gender)) profile.gender = gender;
@@ -60,15 +61,15 @@ export class UserService {
       await this.userRepository.update({ id: userId }, { profileId: profile.id });
     }
     return {
-      message: 'Success',
+      message: PublicMessage.Updated,
     };
   }
 
-  async profile () {
-    const {id} = this.req.user
+  async profile() {
+    const { id } = this.req.user;
     return this.userRepository.findOne({
-      where : {id} , 
-      relations : {profile:true}
-    })
+      where: { id },
+      relations: { profile: true },
+    });
   }
 }
