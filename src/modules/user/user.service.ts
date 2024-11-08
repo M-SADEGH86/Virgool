@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProfileEntity } from './entities/profile.entity';
 import { Repository } from 'typeorm';
@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { isDate } from 'class-validator';
 import { Gender } from './enums/gender.enum';
 import { profileImages } from './types/files';
-import { PublicMessage } from 'src/common/enums/message.enum';
+import { ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -71,5 +71,15 @@ export class UserService {
       where: { id },
       relations: { profile: true },
     });
+  }
+
+  async changeEmail(email: string) {
+    const { id } = this.req.user;
+    const user = await this.userRepository.findOneBy({ email });
+    if (user && user.id !== id) {
+      throw new ConflictException(ConflictMessage.Email);
+    } else if (user && user.id == id) {
+      return { message: PublicMessage.Updated };
+    }
   }
 }

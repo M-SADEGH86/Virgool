@@ -1,6 +1,7 @@
 import { EntityNames } from 'src/common/enums/entity.enum';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { AuthMethod } from 'src/modules/auth/enums/method.enum';
 
 @Entity(EntityNames.Otp)
 export class OtpEntity {
@@ -8,6 +9,8 @@ export class OtpEntity {
   id: number;
   @Column()
   code: string;
+  @Column({nullable:true , type : "enum" , enum : AuthMethod})
+  method: AuthMethod
   @Column()
   expires_in: Date;
   @Column()
