@@ -10,6 +10,8 @@ import { isDate } from 'class-validator';
 import { Gender } from './enums/gender.enum';
 import { profileImages } from './types/files';
 import { ConflictMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { AuthService } from '../auth/auth.service';
+import { TokensService } from '../auth/tokens.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -19,6 +21,8 @@ export class UserService {
     @InjectRepository(ProfileEntity)
     private readonly profileRepository: Repository<ProfileEntity>,
     @Inject(REQUEST) private readonly req: Request,
+    private readonly authService:AuthService,
+    private readonly tokensService:TokensService
   ) {}
 
   async changeProfile(files: profileImages, profileDto: ProfileDto) {
@@ -80,6 +84,13 @@ export class UserService {
       throw new ConflictException(ConflictMessage.Email);
     } else if (user && user.id == id) {
       return { message: PublicMessage.Updated };
+    }
+    user.new_email = email;
+    const otp = await this.authService.saveOtp(user.id)
+    const token = this.tokensService.createEmailToken({email})
+    return {
+      otp:otp.code ,
+      token,
     }
   }
 }
