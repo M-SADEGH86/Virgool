@@ -19,13 +19,19 @@ export class UserService {
     @Inject(REQUEST) private readonly req: Request,
   ) {}
 
-  async changeProfile(files:unknown, profileDto: ProfileDto) {
+  async changeProfile(files: any, profileDto: ProfileDto) {
+    if (files?.image_profile?.length > 0) {
+      let [image] = files?.image_profile;
+      profileDto.image_profile = image.path;
+    }
+    if (files?.bg_image?.length > 0) {
+      let [image] = files?.bg_image;
+      profileDto.bg_image = image.path;
+    }
     const { id: userId, profileId } = this.req.user;
-    console.log(files)
     let profile = await this.profileRepository.findOneBy({ userId });
-    console.log(profile);
-    const { bio, birthday, gender, linkedin_profile, nick_name, x_profile } = profileDto;
-    console.log({ bio, birthday, gender, linkedin_profile, nick_name, x_profile });
+
+    const { bio, birthday, gender, linkedin_profile, nick_name, x_profile, bg_image, image_profile } = profileDto;
     if (profile) {
       if (nick_name && isString(nick_name)) profile.nick_name = nick_name;
       if (bio) profile.bio = bio;
@@ -33,6 +39,8 @@ export class UserService {
       if (gender && Object.values(Gender).includes(gender)) profile.gender = gender;
       if (linkedin_profile) profile.linkedin_profile = linkedin_profile;
       if (x_profile) profile.x_profile = x_profile;
+      if (image_profile) profile.image_profile = image_profile;
+      if (bg_image) profile.bg_image = bg_image;
     } else {
       profile = this.profileRepository.create({
         nick_name,
@@ -42,6 +50,8 @@ export class UserService {
         linkedin_profile,
         x_profile,
         userId,
+        image_profile,
+        bg_image,
       });
     }
     profile = await this.profileRepository.save(profile);
